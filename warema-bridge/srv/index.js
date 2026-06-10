@@ -282,7 +282,13 @@ const stickUsb = new warema(settingsPar.wmsSerialPort,
 );
 
 //Do not attempt connecting to MQTT if trying to discover network parameters
-if (settingsPar.wmsPanid === 'FFFF') return;
+if (settingsPar.wmsPanid === 'FFFF') 
+    {
+        log.debug('Not connecting to MQTT because WMSPANID is FFFF')
+        return;
+    }
+
+log.debug('Connecting to MQTT...')
 
 const client = mqtt.connect(mqttServer,
     {
