@@ -359,6 +359,6 @@ client.on('message', function (topic, message) {
             stickUsb.vnBlindSetPosition(device, parseInt(devices[device]['position']), parseInt(message))
             break;
         default:
-            log.info('Unrecognised command from HA')
+            log.info(`Unrecognised command from HA: ${command} / message: ${message}`)
     }
 });
