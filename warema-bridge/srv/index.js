@@ -332,6 +332,11 @@ client.on('message', function (topic, message) {
         return;
     }
 
+    // Sicherstellen, dass das Device-Objekt existiert, bevor wir Eigenschaften lesen
+    if (!devices[device]) {
+        devices[device] = { position: 0, angle: 0 };
+    }
+
     //scope === 'warema'
     switch (command) {
         case 'set':
@@ -357,14 +362,17 @@ client.on('message', function (topic, message) {
             }
             break;
         case 'set_position':
-            log.debug('Setting ' + device + ' to ' + message + '%, angle ' + devices[device].angle);
-            stickUsb.vnBlindSetPosition(device, parseInt(message), parseInt(devices[device]['angle']))
+            var currentAngle = devices[device].angle !== undefined ? devices[device].angle : 0;
+            log.debug('Setting ' + device + ' to ' + message + '%, angle ' + currentAngle);
+            stickUsb.vnBlindSetPosition(device, parseInt(message), parseInt(currentAngle))
             break;
         case 'set_tilt':
-            log.debug('Setting ' + device + ' to ' + message + '°, position ' + devices[device].position);
-            stickUsb.vnBlindSetPosition(device, parseInt(devices[device]['position']), parseInt(message))
+            var currentPosition = devices[device].position !== undefined ? devices[device].position : 0;
+            log.debug('Setting ' + device + ' to ' + message + '°, position ' + currentPosition);
+            stickUsb.vnBlindSetPosition(device, parseInt(currentPosition), parseInt(message))
             break;
         default:
-            log.info(`Unrecognised command from HA: ${command} / message: ${message}`)
+            // Hier nutzen wir jetzt einfaches String-Mapping, um zu sehen, was falsch läuft
+            log.info('Unrecognised command from HA: ' + command + ' / message: ' + message);
     }
 });
